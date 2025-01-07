@@ -1,0 +1,81 @@
+Simple word-level text dataset, and real-world scenarios may require more complex models and larger datasets. The example code using Python and TensorFlow for implementing VAEs in Natural Language Generation is mentioned below:
+#loading library
+import tensorflow as tf
+from tensorflow.keras.layers import Input, Dense, Lambda
+from tensorflow.keras.models import Model
+from tensorflow.keras import backend as K
+import numpy as np
+
+# Load and preprocess text data
+# Assume you have a dataset named 'text_data' where each element is a sentence.
+
+# Tokenize the sentences into words
+tokenizer = tf.keras.preprocessing.text.Tokenizer()
+tokenizer.fit_on_texts(text_data)
+total_words = len(tokenizer.word_index) + 1
+
+# Convert text to sequences
+sequences = tokenizer.texts_to_sequences(text_data)
+
+# Create input sequences and labels
+input_sequences = []
+for a sequence in sequences:
+    for i in range(1, len(sequence)):
+        n_gram_sequence = sequence[:i+1]
+        input_sequences.append(n_gram_sequence)
+
+# Pad sequences for uniform length
+max_sequence_length = max([len(seq) for seq in input_sequences])
+padded_sequences = tf.keras.preprocessing.sequence.pad_sequences(input_sequences, maxlen=max_sequence_length, padding='pre')
+
+# Create input data (X) and target labels (y)
+X, y = padded_sequences[:, :-1], padded_sequences[:, -1]
+y = tf.keras.utils.to_categorical(y, num_classes=total_words)
+
+# VAE Model
+latent_dim = 10
+
+# Encoder
+encoder_inputs = Input(shape=(max_sequence_length-1,))
+x = Dense(64, activation='relu')(encoder_inputs)
+z_mean = Dense(latent_dim, name='z_mean')(x)
+z_log_var = Dense(latent_dim, name='z_log_var')(x)
+
+# Reparameterization trick for sampling
+def sampling(args):
+    z_mean, z_log_var = args
+    batch = K.shape(z_mean)[0]
+    dim = K.int_shape(z_mean)[1]
+    epsilon = K.random_normal(shape=(batch, dim))
+    return z_mean + K.exp(0.5 * z_log_var) * epsilon
+
+z = Lambda(sampling, output_shape=(latent_dim,), name='z')([z_mean, z_log_var])
+
+encoder = Model(encoder_inputs, [z_mean, z_log_var, z])
+
+# Decoder
+decoder_inputs = Input(shape=(latent_dim,))
+x = Dense(64, activation='relu')(decoder_inputs)
+outputs = Dense(total_words, activation='softmax')(x)
+
+decoder = Model(decoder_inputs, outputs)
+
+# Combined VAE model
+outputs = decoder(encoder(encoder_inputs)[2])
+vae = Model(encoder_inputs, outputs)
+
+# Loss function with KL divergence and categorical cross-entropy
+def vae_loss(y_true, y_pred):
+    reconstruction_loss = tf.keras.losses.categorical_crossentropy(y_true, y_pred)
+    reconstruction_loss *= max_sequence_length-1
+    kl_loss = 1 + z_log_var - K.square(z_mean) - K.exp(z_log_var)
+    kl_loss = K.sum(kl_loss, axis=-1)
+    kl_loss *= -0.5
+    return K.mean(reconstruction_loss + kl_loss)
+
+# Compile the VAE model
+vae.compile(optimizer='adam', loss=vae_loss)
+
+# Train the VAE model
+vae.fit(X, y, epochs=epochs, batch_size=batch_size)
+

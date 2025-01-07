@@ -1,0 +1,45 @@
+Style transfer function: Create a function that takes an input image and the style image and produces an output image with the desired style, as shown:
+     ``` python
+     from keras.preprocessing import image
+     from keras.applications.vgg19 import VGG19, preprocess_input
+     from keras.models import Model
+     import numpy as np
+
+     def style_transfer(input_path, style_path, output_path):
+         # Load images
+         input_img = image.load_img(input_path)
+         style_img = image.load_img(style_path)
+
+         # Convert images to arrays
+         input_array = image.img_to_array(input_img)
+         style_array = image.img_to_array(style_img)
+
+         # Expand dimensions to match VGG input dimensions
+         input_array = np.expand_dims(input_array, axis=0)
+         style_array = np.expand_dims(style_array, axis=0)
+
+         # Preprocess images
+         input_array = preprocess_input(input_array)
+         style_array = preprocess_input(style_array)
+
+         # Load pre-trained VGG model without fully connected layers
+         base_model = VGG19(weights='imagenet', include_top=False)
+
+         # Choose intermediate layers for style and content representation
+         style_layers = ['block1_conv1', 'block2_conv1', 'block3_conv1', 'block4_conv1', 'block5_conv1']
+         content_layer = 'block4_conv2'
+
+         # Create a model that extracts features from intermediate layers
+         style_model = Model(inputs=base_model.input, outputs=[base_model.get_layer(layer).output for layer in style_layers])
+
+         # Extract features from input and style images
+         input_features = style_model.predict(input_array)
+         style_features = style_model.predict(style_array)
+
+         # Apply style transfer
+         generated_image = style_transfer_function(input_features, style_features)
+
+         # Save the generated image
+         image.save_img(output_path, generated_image[0])
+     ```
+

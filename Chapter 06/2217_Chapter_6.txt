@@ -1,0 +1,20 @@
+ Example code for processing user input and generating chatbot response using GPT-3
+import open
+
+open.api_key = 'your-api-key'
+
+def generate_chatbot_response(user_query):
+    prompt = f"User: {user_query}\nChatbot:"
+    response = openai.Completion.create(
+        engine="text-davinci-003",
+        prompt=prompt,
+        temperature=0.7,
+        max_tokens=150
+    )
+    return response.choices[0].text.strip()
+
+# User interaction
+user_query = input("User: ")
+response = generate_chatbot_response(user_query)
+print(f"Chatbot: {response}")
+

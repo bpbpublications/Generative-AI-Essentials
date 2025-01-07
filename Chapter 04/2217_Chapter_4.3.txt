@@ -1,0 +1,25 @@
+practical example of sentiment analysis using BERT on Google Cloud. Refer to the following code:
+```python
+# Install necessary libraries
+!pip install tensorflow-text
+# import required modules
+import tensorflow as tf
+import tensorflo_text as text
+from tensorflow.keras.models import load_model
+from tensorflow.keras.preprocessing import text_dataset_from_directory
+# Load pre-trained BERT model
+bert_model_url = "https://tfhub.dev/tensorflow/small_bert/bert_en_uncased_L-4_H-512_A-8/1"
+bert_model = tf.keras.Sequential([hub.KerasLayer(bert_model_url)])
+# Fine-tune BERT for sentiment analysis
+# ...
+# Load the sentiment analysis model
+model = load_model('bert_sentiment_model.h5')
+# Prepare a sample text for sentiment analysis
+sample_text = "I loved the movie! The plot was engaging, and the acting was superb."
+# Tokenize and predict sentiment
+tokens = bert_model.tokenize(tf.constant([sample_text]))
+prediction = model.predict(tokens)
+# Interpret the result
+sentiment = "Positive" if prediction[0][0] > 0.5 else "Negative"
+print(f"Sentiment: {sentiment}")
+```

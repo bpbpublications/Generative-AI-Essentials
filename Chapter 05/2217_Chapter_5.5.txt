@@ -1,0 +1,20 @@
+```python
+# Install what we need
+!pip install tensorflow tensorflow_hub
+
+# Import the tools
+import tensorflow as tf
+import tensorflow_hub as hub
+
+# Get a pretrained StyleGAN model from TensorFlow Hub
+stylegan_url = "https://tfhub.dev/google/stylegan2ffhq/1"
+stylegan_model = hub.load(stylegan_url)
+
+# Make a movie scene that looks real
+generated_image = stylegan_model(tf.random.normal([1, 512]))
+
+# Show the magic on the screen
+plt.imshow(generated_image[0])
+plt.axis("off")
+plt.show()
+```

@@ -1,0 +1,52 @@
+A grid where the agent can color cells. The goal is to generate a specific pattern, and the agent receives rewards based on how well it matches the pattern.
+The Python code is mentioned below:
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+
+Environment setup
+grid_size = 10
+target_pattern = np.array([
+[1, 1, 1, 0, 0, 0, 0, 0, 0, 0],
+[0, 1, 1, 1, 0, 0, 0, 0, 0, 0],
+[0, 0, 1, 1, 1, 0, 0, 0, 0, 0],
+[0, 0, 0, 1, 1, 1, 0, 0, 0, 0],
+[0, 0, 0, 0, 1, 1, 1, 0, 0, 0],
+[0, 0, 0, 0, 0, 1, 1, 1, 0, 0],
+[0, 0, 0, 0, 0, 0, 1, 1, 1, 0],
+[0, 0, 0, 0, 0, 0, 0, 1, 1, 1],
+[0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
+[0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
+])
+
+Agent
+class ImageGeneratorAgent:
+def __init__(self, grid_size):
+self.grid_size = grid_size
+self.grid = np.zeros((grid_size, grid_size))
+
+def take_action(self, action):
+i, j = action
+self.grid[i, j] = 1 
+
+def get_reward(self):
+Calculate the reward based on how well the grid matches the target pattern:
+similarity = np.sum(self.grid == target_pattern)
+return similarity / np.sum(target_pattern)
+
+Reinforcement learning loop
+agent = ImageGeneratorAgent(grid_size)
+num_episodes = 100
+
+For an episode in range(num_episodes), refer to the following code:
+Agent takes actions
+for _ in range(grid_size):   Simplified for illustration
+action = np.random.randint(grid_size), np.random.randint(grid_size)
+agent.take_action(action)
+Get reward and update model (not shown for simplicity):
+Display Results
+plt.figure(figsize=(8, 8))
+plt.imshow(agent.grid, cmap='gray')
+plt.title("Generated Image")
+plt.show()
+

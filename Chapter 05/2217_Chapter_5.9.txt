@@ -1,0 +1,75 @@
+Python code for using TensorFlow and Keras is mentioned below:
+
+```python[RD1][MOU2]
+import tensorflow as tf
+from tensorflow.keras import Model
+from tensorflow. keras.applications import VGG19
+from tensorflow.keras.preprocessing import image
+from tensorflow.keras.applications.vgg19 import preprocess_input
+import numpy as np
+
+def load_image(image_path, img_height=512, img_width=512):
+img = image.load_img(image_path, target_size=(img_height, img_width))
+img = image.img_to_array(img)
+img = np.expand_dims(img, axis=0)
+img = preprocess_input(img)
+return img
+
+def create_model(layer_names, model):
+outputs = [model.get_layer(name).output for name in layer_names]
+return Model(inputs=model.input, outputs=outputs)
+
+def content_cost(content, generated):
+return tf.reduce_mean(tf.square(content  generated))
+
+def gram_matrix(x):
+return tf.matmul(x, tf.transpose(x))
+
+def style_cost(style, generated):
+style = gram_matrix(style)
+generated = gram_matrix(generated)
+channels = 3
+size = img_height  img_width
+return tf.reduce_sum(tf. square(style  generated)) / (4.  (channels  2)  (size  2))
+
+def total_cost(content_cost, style_cost, alpha=10, beta=40):
+return alpha  content_cost + beta  style_cost
+
+def neural_style_transfer(content_path, style_path, num_iterations=1000):
+content_image = load_image(content_path)
+style_image = load_image(style_path)
+
+model = VGG19(include_top=False, weights='imagenet')
+content_layers = ['block4_conv2']
+style_layers = ['block1_conv1', 'block2_conv1', 'block3_conv1', 'block4_conv1', 'block5_conv1']
+
+content_model = create_model(content_layers, model)
+style_model = create_model(style_layers, model)
+
+generated_image = tf.Variable(content_image, dtype=tf.float32)
+
+optimizer = tf.optimizers.Adam(learning_rate=7.0)
+
+for i in range(num_iterations):
+with tf.GradientTape() as tape:
+content_features = content_model(content_image)
+style_features = style_model(style_image)
+generated_features = content_model(generated_image)
+
+cost_content = content_cost(content_features, generated_features[0])
+cost_style = 0
+for j in range(len(style_layers)):
+cost_style += style_cost(style_features[j], generated_features[j])
+
+cost_total = total_cost(cost_content, cost_style)
+
+grads = tape.gradient(cost_total, generated_image)
+optimizer.apply_gradients([(grads, generated_image)])
+
+if i % 100 == 0:
+print("Iteration {}, Total Cost: {}".format(i, cost_total))
+
+return generated_image.numpy()
+`
+[RD1]As the code extends beyond a single page, it's advisable to extract and provide essential code snippets to maintain readability.
+[MOU2R1]Comment statement

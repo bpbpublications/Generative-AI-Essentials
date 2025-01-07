@@ -1,0 +1,31 @@
+Transformer models excel at translating text between different languages. For example, Google Translate uses transformer-based models to provide accurate and contextually relevant translations, making it easier for people worldwide to communicate in their preferred language.
+Using Google Translate involves interacting with Google Cloud Translation API, which internally uses transformer-based models. The steps to perform translations using Google Translate API in Python are given below:
+1. Set up Google Cloud project: Create a GCP project and enable the Cloud Translation API.
+2. Get API key or service account credentials: Obtain an API key or service account credentials to authenticate your Google Cloud Translation API requests.
+3. Install required libraries: Install the Google Cloud-translate library. Refer to the following code:
+```bash
+pip install google-cloud-translate
+```
+4. Import libraries and authenticate: Import the required libraries and authenticate with your API key or service account credentials. Refer to the following code:
+``` python
+from google.cloud import translate_v2
+import os
+
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "path/to/your/credentials.json"  # Replace with your actual path
+
+client = translate_v2.Client()
+```
+
+5. Perform translation: Use the translate method to perform translations. Refer to the following code:
+```python
+def translate_text(text, target_language):
+    result = client.translate(text, target_language=target_language)
+    return result["input"], result["translatedText"]
+
+source_text = "Hello, how are you?"
+target_language = "es"  # Replace with the target language code, e.g., "es" for Spanish
+
+source, translation = translate_text(source_text, target_language)
+print(f"Source: {source}")
+print(f"Translation: {translation}")
+

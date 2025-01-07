@@ -1,0 +1,22 @@
+
+Applying style transfer to an image to demonstrate art generation and style transfer using the Google Cloud Platform.
+```bash
+!pip install tensorflow pillow ``` 
+A simplified Python script uses TensorFlow and Pillow to apply style transfer to an input image using a pre-trained model. Save this code to a Python file, e.g., `style_transfer.py`: 
+```python
+>> import tensorflow as tf >>import numpy as np
+>>import PIL.Image
+>>import matplotlib.pyplot as plt 
+# Load the pre-trained VGG19 model 
+>>model = tf.keras.applications.VGG19(include_top=False, weights='imagenet') 
+# Define content and style layers content_layers = ['block5_conv2'] 
+style_layers = ['block1_conv1', 'block2_conv1', 'block3_conv1', 'block4_conv1', 'block5_conv1'] 
+num_content_layers = len(content_layers) num_style_layers = len(style_layers) 
+# Load and preprocess your content and style images # Define functions to compute content and style loss 
+# Define the model for style transfer
+# Create a target and initialize it with your content image # Optimize the target image using TensorFlow
+``` 
+5. Run the style transfer script: Execute the Python script using: 
+```bash
+>>python style_transfer.py ``` 
+

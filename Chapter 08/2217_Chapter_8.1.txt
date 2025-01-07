@@ -1,0 +1,56 @@
+DRL is a powerful technique that uses deep neural networks to handle complex tasks with high-dimensional state spaces. It allows RL agents to learn and decide in situations with many variables.
+       Code and output:
+```python
+import tensorflow as tf
+from tensorflow. Keras. layers import Dense
+import numpy as np
+import gym
+
+# Create an environment
+env = gym.make('CartPole-v1')
+
+# Define a deep neural network model
+model = tf. keras.Sequential([
+    Dense(64, activation='relu', input_shape=(env.observation_space.shape[0],)),
+    Dense(32, activation='relu'),
+    Dense(env.action_space.n, activation='linear')
+])
+
+# Define the optimizer and loss function
+optimizer = tf.keras.optimizers.Adam(learning_rate=0.001)
+loss_fn = tf.keras.losses.MeanSquaredError()
+
+# Training loop
+num_episodes = 1000
+for episode in range(num_episodes):
+    state = env.reset()
+    episode_reward = 0
+    done = False
+
+    while not done:
+        # Choose an action based on the current state
+        action = np.argmax(model.predict(np.expand_dims(state, axis=0)))
+
+        # Take the chosen action, observe the next state and reward
+        next_state, reward, done, _ = env.step(action)
+
+        # Calculate the target Q-value
+        target = reward + 0.99  np.max(model.predict(np.expand_dims(next_state, axis=0)))
+
+        # Calculate the Q-value for the chosen action
+        with tf.GradientTape() as tape:
+            q_values = model(np.expand_dims(state, axis=0))
+            action_q_value = q_values[0, action]
+            loss = loss_fn(target, action_q_value)
+
+        # Update the model
+        grads = tape.gradient(loss, model.trainable_variables)
+        optimizer.apply_gradients(zip(grads, model.trainable_variables))
+
+        # Update the current state and episode reward
+        state = next_state
+        episode_reward += reward
+
+    print(f"Episode {episode + 1}, Reward: {episode_reward}")
+```
+

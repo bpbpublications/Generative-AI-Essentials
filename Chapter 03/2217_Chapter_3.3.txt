@@ -1,0 +1,87 @@
+Real-world scenarios may require more sophisticated models and larger datasets. The example code using Python and TensorFlow to implement VAEs in personalized content recommendations is mentioned below:
+#loading library
+import tensorflow as tf
+from tensorflow.keras.layers import Input, Embedding, Flatten, Dense, Lambda, Concatenate
+from tensorflow.keras.models import Model
+from tensorflow.keras import backend as K
+import numpy as np
+
+# Assume you have user-item interaction data and item metadata
+
+# Define hyperparameters
+latent_dim = 10
+num_users = 1000
+num_items = 5000
+epochs = 10
+batch_size = 64
+
+# User and Item Input Layers
+user_input = Input(shape=(1,), name='user_input')
+item_input = Input(shape=(1,),
+ name='item_input')
+
+# User and Item Embeddings
+user_embedding=Embedding
+(output_dim=latent_dim,input_dim=num_users, input_length=1)(user_input)
+item_embedding=Embedding
+(output_dim=latent_dim,input_dim=num_items, input_length=1)(item_input)
+
+# Flatten embeddings
+user_flat = Flatten()(user_embedding)
+item_flat = Flatten()(item_embedding)
+
+# Concatenate user and item embeddings
+merged = Concatenate()([user_flat, item_flat])
+
+# VAE Model
+x = Dense(64, activation='relu')(merged)
+z_mean = Dense(latent_dim, name='z_mean')(x)
+z_log_var = Dense(latent_dim, name='z_log_var')(x)
+
+# Reparameterization trick for sampling
+def sampling(args):
+    z_mean, z_log_var = args
+    batch = K.shape(z_mean)[0]
+    dim = K.int_shape(z_mean)[1]
+    epsilon = K.random_normal(shape=(batch, dim))
+    return z_mean + K.exp(0.5 * z_log_var) * epsilon
+
+z = Lambda(sampling, output_shape=(latent_dim,), name='z')([z_mean, z_log_var])
+
+# Encoder
+encoder = Model([user_input, item_input], [z_mean, z_log_var, z])
+
+# Decoder
+decoder_h = Dense(64, activation='relu')
+decoder_mean = Dense(num_items, activation='sigmoid')
+
+h_decoded = decoder_h(z)
+x_decoded_mean = decoder_mean(h_decoded)
+
+# Decoder Model
+decoder = Model(z, x_decoded_mean)
+
+# Combined VAE model
+vae_outputs = decoder(encoder([user_input, item_input])[2])
+vae = Model([user_input, item_input], vae_outputs)
+
+# Loss function with KL divergence and binary cross-entropy
+def vae_loss(y_true, y_pred):
+    reconstruction_loss = tf.keras.losses.binary_crossentropy(y_true, y_pred)
+    reconstruction_loss *= num_items
+    kl_loss = 1 + z_log_var - K.square(z_mean) - K.exp(z_log_var)
+    kl_loss = K.sum(kl_loss, axis=-1)
+    kl_loss *= -0.5
+    return K.mean(reconstruction_loss + kl_loss)
+
+# Compile the VAE model
+vae.compile(optimizer='adam', loss=vae_loss)
+
+# Generate synthetic user-item interaction data for training (replace this with your real data)
+user_ids = np.random.randint(0, num_users, size=10000)
+item_ids = np.random.randint(0, num_items, size=10000)
+labels = np.random.randint(0, 2, size=10000)
+
+# Train the VAE model
+vae.fit([user_ids, item_ids], labels, epochs=epochs, batch_size=batch_size)
+

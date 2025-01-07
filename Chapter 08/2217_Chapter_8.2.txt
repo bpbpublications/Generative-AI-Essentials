@@ -1,0 +1,67 @@
+Policy gradient methods are RL techniques that optimize policies to enable agents to make better decisions. These methods are instrumental when the policy space is continuous or when dealing with environments where actions are not easily parameterized.
+       Code and output:
+```python
+import tensorflow as tf
+import numpy as np
+import gym
+
+# Create an environment
+env = gym.make('CartPole-v1')
+
+# Define a policy network
+policy_network = tf.keras.Sequential([
+    tf.keras.layers.Dense(32, activation='relu', input_shape=(env.observation_space.shape[0],)),
+    tf.keras.layers.Dense(32, activation='relu'),
+    tf.keras.layers.Dense(env.action_space.n, activation='softmax')
+])
+
+# Define the optimizer
+optimizer = tf.keras.optimizers.Adam(learning_rate=0.001)
+
+# Training loop
+num_episodes = 1000
+discount_factor = 0.99
+
+for episode in range(num_episodes):
+    state = env.reset()
+    episode_reward = 0
+    done = False
+    episode_states = []
+    episode_actions = []
+    episode_rewards = []
+
+    while not done:
+        # Choose an action based on the policy
+        action_prob = policy_network.predict(np.expand_dims(state, axis=0))[0]
+        action = np.random.choice(env.action_space.n, p=action_prob)
+
+        # Take the chosen action, observe the next state and reward
+        next_state, reward, done, _ = env.step(action)
+
+        # Store state, action, and reward for this time step
+        episode_states.append(state)
+        episode_actions.append(action)
+        episode_rewards.append(reward)
+
+        # Update the current state and episode reward
+        state = next_state
+        episode_reward += reward
+
+    # Calculate returns and policy gradients
+    returns = []
+    cumulative_return = 0
+    for r in reversed(episode_rewards):
+        cumulative_return = r + discount_factor  cumulative_return
+        returns.insert(0, cumulative_return)
+
+    with tf.GradientTape() as tape:
+        action_probs = policy_network(np.vstack(episode_states))
+        selected_action_probs = tf.reduce_sum(tf.one_hot(episode_actions, env.action_space.n)  action_probs, axis=1)
+        loss = -tf.reduce_sum(tf.math.log(selected_action_probs)  np.array(returns))
+
+    # Update the policy network
+    grads = tape.gradient(loss, policy_network.trainable_variables)
+    optimizer.apply_gradients(zip(grads, policy_network.trainable_variables))
+
+    print(f"Episode {episode + 1}, Reward: {episode_reward}")
+```

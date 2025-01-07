@@ -1,0 +1,21 @@
+Example code for StyleGAN2 in TensorFlow is given below:
+```python
+# Install necessary libraries
+!pip install TensorFlow
+
+# Import required modules
+import tensorflow as tf
+import numpy as np
+
+# Load pre-trained StyleGAN2 model
+model = tf.keras.models.load_model("stylegan2_model.h5")
+
+# Generate a random design sample
+random_input = np.random.rand(1, latent_space_dim)
+generated_image = model.predict(random_input)
+
+# Display the generated design
+plt.imshow(generated_image[0])
+plt.show()
+```
+

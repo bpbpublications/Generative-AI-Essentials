@@ -1,0 +1,21 @@
+Example code snippet (using Python and GPT-3):
+```python
+# Example code for generating a Python code snippet using GPT-3
+import openai
+
+openai.api_key = 'your-api-key'
+
+def generate_code(description):
+    prompt = f"Generate a Python code snippet for: {description}"
+    response = openai.Completion.create(
+        engine="text-davinci-003",
+        prompt=prompt,
+        temperature=0.7,
+        max_tokens=150
+    )
+    return response.choices[0].text.strip()
+
+# User interaction
+coding_description = input("Enter the coding task description: ")
+generated_code = generate_code(coding_description)
+print(generated_code)

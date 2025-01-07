@@ -1,0 +1,36 @@
+Sample code for fine-tuning GPT-3 using Hugging Face's Transformers library
+from transformers import GPT2LMHeadModel, GPT2Tokenizer, GPT2Config
+from transformers import TextDataset, DataCollatorForLanguageModeling
+from transformers import Trainer, TrainingArguments
+model_name = "gpt2"
+model = GPT2LMHeadModel.from_pretrained(model_name)
+tokenizer = GPT2Tokenizer.from_pretrained(model_name)
+# Load your dataset
+dataset = TextDataset(
+    tokenizer=tokenizer,
+    file_path="gs://your-bucket/dataset.txt",
+    block_size=128,
+)
+# Create a data collator
+data_collator = DataCollatorForLanguageModeling(
+    tokenizer=tokenizer,
+    mlm=False
+)
+# Set up training arguments
+training_args = TrainingArguments(
+    output_dir="gs://your-bucket/output",
+    overwrite_output_dir=True,
+    num_train_epochs=1,
+)
+
+# Set up the Trainer
+trainer = Trainer(
+    model=model,
+    args=training_args,
+    data_collator=data_collator,
+    train_dataset=dataset,
+)
+
+# Fine-tune the model
+trainer.train()
+

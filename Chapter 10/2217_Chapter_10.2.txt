@@ -1,0 +1,48 @@
+Imagine a scenario where the AI generates a creative story but veers off-topic from the user's prompt. How would you handle such situations?
+Answer 2: Here is a Python approach: the AI checks the generated story against the user's prompt:
+# Python Code:
+```python
+class StorytellingAI:
+    def __init__(self):
+        self.stories = []
+    def generate_story(self, user_prompt):
+        # Your existing story generation logic goes here
+        # This is a placeholder. Replace it with your implementation
+        new_story = "Once upon a time..."
+        self.stories.append(new_story)
+        return new_story
+    def check_relevance(self, user_prompt, generated_story):
+        # Check the relevance of the generated story to the user's prompt
+        # You may use NLP techniques or predefined criteria for relevance
+        relevance_score = self.calculate_relevance(user_prompt, generated_story)
+        if relevance_score < threshold:
+            # If the story is irrelevant enough, refine it or generate a new one
+            refined_story = self.refine_story(user_prompt)
+            print("The generated story is not sufficiently relevant. Refining...")
+            return refined_story
+        return generated_story
+    def calculate_relevance(self, user_prompt, generated_story):
+        # Placeholder for relevance calculation logic
+        # You may use NLP techniques, keyword matching, or other methods
+        # to determine the relevance score
+        relevance_score = 0.8  # Replace with actual relevance calculation
+        return relevance_score
+    def refine_story(self, user_prompt):
+        # Placeholder for story refinement logic
+        # You may adjust the existing story or generate a new one
+        refined_story = "In a land closely related to your prompt..."
+        return refined_story
+
+# Example usage
+storytelling_ai = StorytellingAI()
+# User's prompt
+user_prompt = "Tell me a story about a magical forest."
+# Generate a story
+generated_story = storytelling_ai.generate_story(user_prompt)
+# Check relevance and refine if necessary
+final_story = storytelling_ai.check_relevance(user_prompt, generated_story)
+
+# Output
+print(f"Generated Story: {final_story}")
+
+

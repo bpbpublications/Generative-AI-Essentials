@@ -1,0 +1,26 @@
+code might look in Python, using the `openai` Python package:
+
+```python
+import openai
+
+# Ensure you have your API key set in your environment or pass it explicitly
+openai.api_key = 'your-api-key-here'
+
+# Step 4: Generate the Poem with prompt
+def generate_romantic_poem():
+    response = openai.Completion.create(
+      engine="text-davinci-003",  # or the latest available version
+      prompt="Write a poem in the style of Romantic poetry about the beauty of nature:",
+      temperature=0.7,  # Adjusts randomness
+      max_tokens=150,  # Limits the length of the generated text
+      top_p=1,
+      frequency_penalty=0,
+      presence_penalty=0
+    )
+    poem = response.choices[0].text.strip()  # Extracting the text generated
+    return poem
+
+# Generate and print the poem
+print(generate_romantic_poem())
+```
+

@@ -1,0 +1,50 @@
+Model-Based Reinforcement Learning (Model-Based RL) is an RL approach that incorporates predictive models of the environment to plan and execute actions more effectively. This method aims to increase the efficiency of RL agents by having them learn and leverage a model of the environment to make informed decisions.
+       Code and output:
+```python
+import numpy as np
+import gym
+
+# Create an environment
+env = gym.make('CartPole-v1')
+
+# Define a predictive model of the environment
+class EnvironmentModel:
+    def __init__(self, state_space, action_space):
+        self.state_space = state_space
+        self.action_space = action_space
+        self.model = {}  # A dictionary to store the predicted next state for each (state, action) pair
+
+    def predict_next_state(self, state, action):
+        # For simplicity, assume a deterministic model
+        returns self.model[(state, action)]
+
+# Initialize the environment model
+model = EnvironmentModel(env.observation_space.shape[0], env.action_space.n)
+
+# Training loop
+num_episodes = 1000
+discount_factor = 0.99
+learning_rate = 0.1
+
+for episode in range(num_episodes):
+    state = env.reset()
+    episode_reward = 0
+    done = False
+
+    while not done:
+        # Choose an action based on the learned model
+        action = np.argmax([model.predict_next_state(state, a) for a in range(env.action_space.n)])
+
+        # Take the chosen action, observe the next state and reward
+        next_state, reward, done, _ = env.step(action)
+
+        # Update the environment model (for simplicity, assume a deterministic model)
+        model.model[(state, action)] = next_state
+
+        # Update the current state and episode reward
+        state = next_state
+        episode_reward += reward
+
+    print(f"Episode {episode + 1}, Reward: {episode_reward}")
+```
+

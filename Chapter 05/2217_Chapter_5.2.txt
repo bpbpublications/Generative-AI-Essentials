@@ -1,0 +1,21 @@
+Given below is a simplified pseudocode for generating new animals:
+```python
+# Assuming a trained generator 'G' from a GAN
+
+def generate_new_animals(generator, num_images):
+    new_animals = []
+    for i in range(num_images):
+        # Generate a random noise vector
+        noise = generate_random_noise()
+        
+        # Use the generator to create a new image
+        new_animal = generator.predict(noise)
+        
+        new_animals.append(new_animal)
+    
+    return new_animals
+
+
+# Generate ten new animal images
+new_animals = generate_new_animals(trained_generator, 10)
+print(new_animals)

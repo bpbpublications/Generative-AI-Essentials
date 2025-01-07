@@ -1,0 +1,29 @@
+Code example of data augmentation with TensorFlow and OpenCV are mentioned below:
+# Install necessary libraries
+!pip install tensorflow OpenCV python
+
+# Import required modules
+import tensorflow as tf
+import cv2
+from google.cloud import storage
+
+# Connect to Cloud Storage
+client = storage.Client()
+bucket_name = "your_bucket_name"
+bucket = client.get_bucket(bucket_name)
+
+# Download an image from Cloud Storage
+image_blob = bucket.blob("path/to/your/image.jpg")
+image_blob.download_to_filename("original_image.jpg")
+
+# Load the image using OpenCV
+image = cv2.imread("original_image.jpg")
+
+# Apply data augmentation (e.g., horizontal flip)
+augmented_image = cv2.flip(image, 1)
+
+# Save augmented image back to Cloud Storage
+cv2.imwrite("augmented_image.jpg", augmented_image)
+augmented_blob = bucket.blob("path/to/your/augmented_image.jpg")
+augmented_blob.upload_from_filename("augmented_image.jpg")
+

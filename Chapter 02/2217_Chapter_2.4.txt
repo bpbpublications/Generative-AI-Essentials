@@ -1,0 +1,20 @@
+Anomaly detection in network security, we will create a simplified Python script that simulates network traffic data and uses a basic anomaly detection algorithm. Keep in mind that real-world network security requires more sophisticated tools and algorithms. 
+Here is a basic Python script for demonstration: 
+```python
+import random
+# Simulated network traffic data
+network_traffic = [random.randint(10, 100) for _ in range(100)] 
+# Function to detect anomalies
+def detect_anomalies(data, threshold=80): 
+anomalies = []
+For i, value in enumerate(data): 
+if value > threshold: anomalies.append((i, value)) 
+    return anomalies
+# Set a threshold for anomaly detection threshold = 80 
+# Detect anomalies in the network traffic data
+anomalies = detect_anomalies(network_traffic, threshold) 
+# Print the anomalies
+if anomalies:
+print("Anomalies detected:") For the anomaly in anomalies: 
+print(f"Data point {anomaly[0]}: Value {anomaly[1]}") Else: 
+print("No anomalies detected.") ``
