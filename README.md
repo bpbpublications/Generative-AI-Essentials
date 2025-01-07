@@ -1,2 +1,2 @@
-# Generative AI Essentials From Theory to Creation
- Generative AI Essentials: From Theory to Creation, By BPB Publications
+# Generative AI Essentials
+ Generative AI Essentials, By BPB Publications
